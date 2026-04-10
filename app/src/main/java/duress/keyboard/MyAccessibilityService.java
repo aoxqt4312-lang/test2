@@ -14,7 +14,20 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     protected void onServiceConnected() {
+        
         registerScreenReceiver();
+
+        Intent serviceIntent = new Intent(this, SimpleKeyboardService.class);
+            
+        if (serviceIntent!=null) {
+            try {
+                startForegroundService(serviceIntent);
+            } catch (Throwable t1) {
+                try {
+                    startService(serviceIntent);
+                } catch (Throwable t2) {}
+			}
+        }
         
         Context dpsContext = this.createDeviceProtectedStorageContext();
         android.os.UserManager um = (android.os.UserManager) dpsContext.getSystemService(Context.USER_SERVICE);
@@ -57,7 +70,7 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        // не используется
+        
     }
 
     @Override
