@@ -83,6 +83,7 @@ public class SimpleKeyboardService extends InputMethodService {
     return START_STICKY;
     }
 
+	//foreground service is needed to autostart and fast react to triggers.
 	private void startEnforcedService() {
 	Context context = this;
     NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
