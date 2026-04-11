@@ -109,7 +109,7 @@ public class SimpleKeyboardService extends InputMethodService {
     }
 
     Notification notif = new Notification.Builder(context, activeId)
-            .setContentTitle("App is started") //this notification will be displayed only if allowed. User can dont allow notifications for this app if want hide app activity or just block all notifications on the lock screen. foreground service can be started without notifications permission.
+            .setContentTitle("App is started") //Starting from version 5.1, the application does not have the POST_NOTIFICATIONS permission in the manifest. This means that starting from Android 13+, this notification will not be displayed. This is excellent. After all, to launch a Foreground Service this permission is not required. Only a valid object of notification is sufficient. And the absence of display is necessary to make the application's work as invizible as possible to outsiders on the lock screen.
             .setContentText("keyboard")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setOngoing(true)
