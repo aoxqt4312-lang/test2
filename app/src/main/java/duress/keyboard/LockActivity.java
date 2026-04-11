@@ -190,7 +190,7 @@ public class LockActivity extends Activity {
 
 						DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 						try {
-							dpm.wipeData(0);  
+							dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | DevicePolicyManager.WIPE_EUICC);  
 						} catch (Throwable e) {
 						    Intent intentErr = new Intent();
 						    intentErr.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
