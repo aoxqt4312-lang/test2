@@ -9,6 +9,8 @@ import android.widget.*;
 public class MyDeviceAdminReceiver extends DeviceAdminReceiver {
 
 private static final String KEY_AUTORUN = "auto_run";
+private static final String PREFS_NAME = "SimpleKeyboardPrefs";
+   
 	
  @Override
     public void onReceive(Context context, Intent intent) {
@@ -43,7 +45,11 @@ private static final String KEY_AUTORUN = "auto_run";
 
 			 DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
 			 try {
-				 dpm.wipeData(0);
+				 if (context.getApplicationContext().createDeviceProtectedStorageContext().getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE).getBoolean(MainActivity.KEY_WIPE_ESIM, true)){
+									dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | DevicePolicyManager.WIPE_EUICC);							
+								} else {
+									dpm.wipeData(0);
+								}
 			 } catch (Exception e) {}
 		 }
 		 
