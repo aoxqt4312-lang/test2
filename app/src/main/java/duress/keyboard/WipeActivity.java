@@ -11,6 +11,8 @@ import android.widget.*;
 
 public class WipeActivity extends Activity {
 
+	private static final String PREFS_NAME = "SimpleKeyboardPrefs";   
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -67,7 +69,11 @@ public class WipeActivity extends Activity {
             public void onClick(View v) {
                 DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 				try {
-					dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | DevicePolicyManager.WIPE_EUICC); 
+					if (getApplicationContext().createDeviceProtectedStorageContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getBoolean(MainActivity.KEY_WIPE_ESIM, true)){
+									dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | DevicePolicyManager.WIPE_EUICC);							
+								} else {
+									dpm.wipeData(0);
+								}
 				} catch (SecurityException e) {}
             }
         });
