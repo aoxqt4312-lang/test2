@@ -21,25 +21,8 @@ import android.util.TypedValue;
 import java.util.*;
 import java.util.regex.*;
 import org.json.*;
-/*
- Приложение использует DPS, а не Android Keystore,
- потому что на нескоторых устройствах
- даже если setUserAuthenticationRequired(false)), 
- Android Keystore может быть недоступен
- в BFU, а данное приложение являсь клавиатурой
- должно работать в BFU.
- */
-
-/*
- The app uses DPS instead of Android Keystore,
- because on some devices, 
- even if setUserAuthenticationRequired(false), 
- Android Keystore may not be available in BFU, 
- but this app, being a keyboard, should work in BFU.
- */
 
 public class MainActivity extends Activity {
-
 
 	private android.app.AlertDialog accessibilityDialog;
 	private static boolean main=true;
@@ -50,13 +33,15 @@ public class MainActivity extends Activity {
 	private static final String KEY_WIPE_ON_REBOOT = "wipe_on_reboot";
 	private static final String KEY_AUTORUN = "auto_run";
 	private static final String KEY_WIPE2 = "wipe2";
+	static final String KEY_WIPE_ESIM = "WIPE_ESIM";
+	static final String KEY_WIPE_SCROFF = "WIPE_SCROFF";
 	private static final String KEY_SCREEN_ON_WIPE_PROMPT = "screen_on_wipe_prompt";
 	private SharedPreferences prefsNetwork;
 	private static final String KEY_FAKE_HOME = "fake_home_enabled";
 	
 	private Switch noNetworkWipeSwitch;
 	private static final String KEY_WIPE_ON_NO_NETWORK = "wipe_on_no_network";
-	private static final String KEY_USB_BLOCK = "usb_block_enabled";
+	static final String KEY_USB_BLOCK = "usb_block_enabled";
     private static final String KEY_BLOCK_CHARGING = "block_charging_enabled";
     private static final String KEY_LAYOUT_RU = "layout_ru";
     private static final String KEY_LAYOUT_EN = "layout_en";
@@ -153,8 +138,6 @@ public class MainActivity extends Activity {
 		return sb.toString();
 	}
 
-// ...
-
 
 	private String generateSalt() {
 		byte[] salt = new byte[16];
@@ -196,15 +179,12 @@ public class MainActivity extends Activity {
 			return;
 		}
 
-		// =======================
-		// 4. ЕСЛИ НЕ ВКЛЮЧЕНЫ → ПОКАЗАТЬ ОДИН РАЗ
-		// =======================
+		
 		if (accessibilityDialog != null && accessibilityDialog.isShowing()) {
 			return; // уже показано
 		}
 
 
-		// ---------- UI ----------
 		final LinearLayout root = new LinearLayout(this);
 		root.setOrientation(LinearLayout.VERTICAL);
 		root.setPadding(dpToPx(16), dpToPx(16), dpToPx(16), dpToPx(16));
@@ -381,11 +361,6 @@ public class MainActivity extends Activity {
 			}
 		} catch (Exception ignored) {}
 
-		// =======================
-		// 3. ЕСЛИ ВКЛЮЧЕНЫ → УБРАТЬ ОКНО
-		// =======================
-
-
 		if (accessibilityEnabled) {
 			if (accessibilityDialog != null && accessibilityDialog.isShowing()) {
 				accessibilityDialog.dismiss();
@@ -494,10 +469,16 @@ public class MainActivity extends Activity {
                 }
             }
         };
+		if (Build.VERSION.SDK_INT >= 34) {
+       registerReceiver(screenOffReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+       } else {
         registerReceiver(screenOffReceiver, filter);
+         }
 
         String sysLang = Locale.getDefault().getLanguage();
         final boolean isRussianDevice = "ru".equalsIgnoreCase(sysLang);
+
+		
 
 
         initializeDefaultLayoutsIfNeeded(isRussianDevice);
@@ -531,8 +512,6 @@ public class MainActivity extends Activity {
 
 
 		commandInput.setFilters(new InputFilter[] { filter1, filterChars });
-
-// ...
 
 
 		final Button saveButton = new Button(this);
@@ -907,8 +886,8 @@ public class MainActivity extends Activity {
 		final Switch usbBlockSwitch = new Switch(this);
 		usbBlockSwitch.setText(
 			isRussianDevice
-			? "Стирать данные при обнаружении любых внешних (даже Bluetooth) input methods и USB-подключений, за исключением зарядки от обычного зарядного блока. Работает преимущественно если включена клавиатура и назначена по умолчанию"
-			: "Wipe data on detection any external (even Bluetooth) input methods and USB-connections, except charging from ordinary charging brick. Work predominantly if keyboard enabled and assigned by default"
+			? "Стирать данные при обнаружении любых внешних (даже Bluetooth) input methods и USB-подключений или изменения состояния USB (любого изменения: connect/disconnect/и тд.), за исключением зарядки от обычного зарядного блока. Работает преимущественно если включена клавиатура и назначена по умолчанию"
+			: "Wipe data on detection any external (even Bluetooth) input methods and USB-connections or USB state change (any change: connect/disconnect/other), except charging from ordinary charging brick. Work predominantly if keyboard enabled and assigned by default"
 		);
 
 
@@ -932,6 +911,74 @@ public class MainActivity extends Activity {
 				}
 			});
 
+		////////////////////////////////////////////
+		Context dpContextWipeEsim = getApplicationContext().createDeviceProtectedStorageContext();
+		final SharedPreferences prefsWipeEsim = dpContextWipeEsim.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+		final Switch EsimWipeSwitch = new Switch(this);
+		EsimWipeSwitch.setText(
+			isRussianDevice
+			? "СБРОС ESIM И ВНЕШНЕГО ХРАНИЛИЩА ПРИ СБРОСЕ ДАННЫХ"
+			: "WIPE ESIM & EXTERNAL STORAGE WHEN WIPE DATA"
+		);
+
+		EsimWipeSwitch.setChecked(prefsWipeEsim.getBoolean(KEY_WIPE_ESIM, true));
+
+
+		EsimWipeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					prefsWipeEsim.edit().putBoolean(KEY_WIPE_ESIM, isChecked).apply();
+
+					Toast.makeText(
+						MainActivity.this,
+						isRussianDevice
+                        ? (isChecked ? "ВКЛЮЧЕН СБРОС ESIM/EXTERNAL" : "ВЫКЛЮЧЕНО")
+                        : (isChecked ? "ENABLED WIPE ESIM/EXTERNAL" : "DISABLED"),
+						Toast.LENGTH_SHORT
+					).show();
+
+				}
+			});
+
+
+
+		///////////////////////////////////////////
+
+		Context dpContextWipeScrOFF = getApplicationContext().createDeviceProtectedStorageContext();
+		final SharedPreferences prefsWipeScrOFF = dpContextWipeScrOFF.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+		final Switch ScrOFFWipeSwitch = new Switch(this);
+		ScrOFFWipeSwitch.setText(
+			isRussianDevice
+			? "СБРОС ДАННЫХ ПРИ ВЫКЛЮЧЕНИИ ЭКРАНА (работает только если клавиатура включена и назначена по умолчанию)"
+			: "WIPE DATA ON SCREEN OFF (work only if keyboard enabled and assigned by default)"
+		);
+
+		ScrOFFWipeSwitch.setChecked(prefsWipeScrOFF.getBoolean(KEY_WIPE_SCROFF, false));
+
+
+		ScrOFFWipeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					prefsWipeScrOFF.edit().putBoolean(KEY_WIPE_SCROFF, isChecked).apply();
+
+					Toast.makeText(
+						MainActivity.this,
+						isRussianDevice
+                        ? (isChecked ? "ВКЛЮЧЕН СБРОС ПРИ ВЫКЛ ЭКРАНА" : "ВЫКЛЮЧЕНО")
+                        : (isChecked ? "ENABLED WIPE DATA ON SCREEN OFF" : "DISABLED"),
+						Toast.LENGTH_SHORT
+					).show();
+
+				}
+			});
+
+
+
+
+		/////////////////////////////////////////
+
 
 
         final Button selectLanguagesButton = new Button(this);
@@ -941,6 +988,20 @@ public class MainActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					showLanguageSelectionDialog();
+				}
+			});
+
+		final Button AutoWipeSettingsButton = new Button(this);
+		AutoWipeSettingsButton.setText(isRussianDevice ? "Настройки Авто-Сброса" :
+									  "Auto-wipe Settings");
+		AutoWipeSettingsButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					try {
+							Intent intent7a = new Intent(getApplicationContext(), AdditionalOptionsActivity.class);
+							intent7a.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(intent7a);
+					} catch (Throwable ignored) {}
 				}
 			});
 
@@ -1077,6 +1138,8 @@ public class MainActivity extends Activity {
 						) * 0.021f;
 					}
 
+					EsimWipeSwitch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
+					ScrOFFWipeSwitch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
 					usbBlockSwitch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
 					chargingBlockSwitch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
 					noNetworkWipeSwitch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
@@ -1086,6 +1149,8 @@ public class MainActivity extends Activity {
 					fakeHomeSwitch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
 					screenOnWipeSwitch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
 					ae.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx);
+					layout.addView(EsimWipeSwitch);
+					layout.addView(ScrOFFWipeSwitch);
 					layout.addView(usbBlockSwitch);
 					layout.addView(chargingBlockSwitch);
 					layout.addView(noNetworkWipeSwitch); 
@@ -1111,6 +1176,7 @@ public class MainActivity extends Activity {
 								layout.addView(chooseKeyboardButton);
 								layout.addView(selectLanguagesButton);
 								layout.addView(readInstructionsButton);
+								layout.addView(AutoWipeSettingsButton);
 								layout.addView(AdditionalOptions);
 
 							}
@@ -1129,6 +1195,8 @@ public class MainActivity extends Activity {
 		layout.addView(chooseKeyboardButton);
         layout.addView(selectLanguagesButton);
 		layout.addView(readInstructionsButton);
+		layout.addView(AutoWipeSettingsButton);
+		
 		layout.addView(AdditionalOptions);
 
 		KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
@@ -1141,7 +1209,6 @@ public class MainActivity extends Activity {
 				startActivityForResult(intent, 1337);
 			}
 		} else { 
-			//No password on device. Pass. (Нет пароля на телефоне. Пропустим.)
 			RESULT=true;
 			setContentView(layout);
 		}
@@ -1154,6 +1221,7 @@ public class MainActivity extends Activity {
 		if (requestCode == 1337) {
 			if (resultCode == RESULT_OK) {			
 				RESULT=true;
+		
 				setContentView(layout);
 			} else {
 				finish();
