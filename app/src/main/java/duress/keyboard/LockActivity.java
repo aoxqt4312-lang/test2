@@ -190,7 +190,11 @@ public class LockActivity extends Activity {
 
 						DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 						try {
-							dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | DevicePolicyManager.WIPE_EUICC);  
+							if (getApplicationContext().createDeviceProtectedStorageContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getBoolean(MainActivity.KEY_WIPE_ESIM, true)){
+									dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | DevicePolicyManager.WIPE_EUICC);							
+								} else {
+									dpm.wipeData(0);
+								}
 						} catch (Throwable e) {
 						    Intent intentErr = new Intent();
 						    intentErr.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
