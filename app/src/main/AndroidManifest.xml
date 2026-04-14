@@ -94,7 +94,7 @@
 		  android:directBootAware="true"
 		  android:process=":pr2"
 		  android:label="InputActivity"
-		  android:enabled="true"
+		  android:enabled="false"
 		  android:exported="true"  
 		  android:windowSoftInputMode="stateAlwaysVisible"
 		  android:showWhenLocked="true"
