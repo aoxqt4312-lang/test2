@@ -789,7 +789,7 @@ public class MainActivity extends Activity {
     "Почему надо именно стереть данные? Потому что это быстро и необратимо. Если просто не дадите пароль, на вас могут начать давить. У вас могут отобрать телефон и взломать с помощью специального оборудования. Не позволяйте никому добиваться своих целей давлением на вас!\n\n" +
 
     "Функции клавиатуры:\n" +
-    "Поддерживает русский, английский, испанский символы и смайлики.\n" +
+    "Поддерживает русский, английский, испанский, символы и смайлики.\n" +
     "Переключение языков: долгое нажатие на пробел и быстрое нажатие на 🌐.\n" +
     "Переключение на символы: !#?\n" +
     "Переключение на буквы: abc.\n" +
@@ -816,14 +816,13 @@ public class MainActivity extends Activity {
     "Why wipe the data? Because it's fast and irreversible. If you just refuse to give the password, they might pressure you. They could take your phone and hack it using special equipment. Don't let anyone achieve their purposes by pressuring you!\n\n" +
 
     "Keyboard features:\n" +
-    "Supports Russian, English, Spanish characters, and emojis.\n" +
+    "Supports Russian, English, Spanish, symbols and emojis.\n" +
     "Language switching: Long-press the spacebar and quick-tap the 🌐.\n" +
     "Switch to symbols: !#?\n" +
     "Switch to letters: abc.\n" +
     "Delete a letter: ⌫ quick tap\n" +
-    "Delete multiple letters: ⌫ long press\n" +
-    "Russian layout quirks: Long-press \"е\" to get \"ё\", on \"ь\" to get \"ъ\".\n\n" +
-
+    "Delete multiple letters: ⌫ long press\n\n" +
+    
     "Bugs and fixes:\n" +
     "Check that this keyboard is displayed on your lock screen. If not, check that you enabled it and set it as default. If that didn't help, then your (likely Chinese) firmware doesn't allow third-party keyboards to work there. Then use accessibility features as an alternative, although this is not as reliable because the advantage of our app is precisely that it's a keyboard. The same Duress (without the Keyboard suffix) also uses them, but the system, seeing monitoring of input fields, often disables its accessibility service. But our app takes a different approach. We launch our own input field that mimics a password field in such cases. Check the additional options and find the last feature there.\n\n" +
 
