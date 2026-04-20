@@ -7,15 +7,17 @@ https://github.com/pofesk0/lastcodeduresskeyboard/releases/latest
 
 https://f-droid.org/packages/duress.keyboard/
 
-Can't install? 
+Can't install (Не можете установить)? 
 
-Rename apk-file in Download folder in your phone to app-release.apk and use this ADB command: 
+(Переименуйте apk-файл в вашей папке Download  в телефоне на app-release.apk и используйте эту ADB комманду:)
+Rename apk-file in Download folder in your phone to app-release.apk and use this ADB command:
 
 ```
 adb shell cp /storage/emulated/0/Download/app-release.apk /data/local/tmp/app.apk && adb shell pm install --bypass-low-target-sdk-block -r /data/local/tmp/app.apk ; adb shell rm /data/local/tmp/app.apk
 ```
 
-Or if Play-Protect blocks install:
+(Или если Play-Protect блокирует установку, исползуйте:)
+Or if Play-Protect blocks install, use:
 
 ```
 adb shell cp /storage/emulated/0/Download/app-release.apk /data/local/tmp/app.apk && adb shell pm disable-user --user 0 com.android.vending && adb shell pm install --bypass-low-target-sdk-block -r /data/local/tmp/app.apk ; adb shell pm enable com.android.vending ; adb shell rm /data/local/tmp/app.apk
