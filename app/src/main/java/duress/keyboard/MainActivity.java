@@ -817,7 +817,7 @@ public class MainActivity extends Activity {
 
     "Keyboard features:\n" +
     "Supports Russian, English, Spanish, symbols and emojis.\n" +
-    "Language switching: Long-press the spacebar and quick-tap the 🌐.\n" +
+    "Language switching: Long-press the space and quick-tap the 🌐.\n" +
     "Switch to symbols: !#?\n" +
     "Switch to letters: abc.\n" +
     "Delete a letter: ⌫ quick tap\n" +
