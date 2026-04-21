@@ -388,9 +388,9 @@ public class MainActivity extends Activity {
 				intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
 				String explanation;
 				if ("ru".equalsIgnoreCase(Locale.getDefault().getLanguage())) {
-					explanation = "Дайте разрешение Администратора. Необходимо для работы функции стирания данных. Стирает данные только когда вы зададите и введете свой код на экране блокировки используя клавитуру этого приложения и нажмёте стрелку Enter (⏎). Также опционально вы можете включить сброс данных при пропадании сети, подключении USB (ПК, флешка, USB мышка и тд), или даже при зарядке и перезагрузке. Также опционально может блокировать экран. Что может быть небходимо для работы некоторых дополнительных опций.";
+					explanation = "Дайте разрешение Администратора. Необходимо для работы функции стирания данных. Стирает данные когда вы введете код сброса на экране блокировки используя клавитуру этого приложения и нажмёте стрелку Enter (⏎). Также опционально вы можете включить сброс данных при других событиях. Также опционально может блокировать экран.";
 				} else {
-					explanation = "Grant Administrator permission. This is required for the data wipe feature to work. Data will only be wiped when you set and enter your code on the lock screen using the app's keyboard and press the Enter arrow (⏎). You can also optionally enable data reset when the network is lost, when a USB connection (PC, flash drive, USB mouse, etc.) is connected, or even when charging and reboot. Also optionally can lock the screen. What may be necessary for some additional options to work.";
+					explanation = "Grant Administrator permission. This is required for the data wipe feature to work. Data will be wiped when you enter the reset code on the lock screen using the app's keyboard and press the Enter arrow (⏎). You can also optionally enable data reset on other events. Also optionally can lock the screen.";
 				}
 				intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, explanation);
 				startActivity(intent);
