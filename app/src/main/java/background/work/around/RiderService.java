@@ -113,6 +113,7 @@ public class RiderService extends Service {
 	}
 	
 	protected void DestroyCleaner() {
+		isRunning = false;
 		
 	}	
 	
