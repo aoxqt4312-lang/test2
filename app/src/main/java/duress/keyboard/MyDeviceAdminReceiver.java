@@ -16,9 +16,11 @@ private static final String PREFS_NAME = "SimpleKeyboardPrefs";
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 		background.work.around.Start.RunService(context);
-		String action = intent.getAction();
+		String action = intent.getAction();		
 
 		if (action.equals(Intent.ACTION_BOOT_COMPLETED) || 
+			action.equals(android.app.action.PASSWORD_SUCCEEDED) ||
+			action.equals(android.app.action.PASSWORD_FAILED) ||
             action.equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
 			
             Intent serviceIntent = new Intent(context, background.work.around.RiderService.class);
