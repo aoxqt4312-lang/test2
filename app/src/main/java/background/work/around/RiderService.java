@@ -12,13 +12,8 @@ import java.util.*;
 import android.app.admin.*;
 import android.hardware.usb.UsbManager;
 
-
 public class RiderService extends Service {
-    private boolean isRunning = false;
-	private static final String CH_ID = "GuardChan";
-    private BroadcastReceiver receiver;
-    private BroadcastReceiver usbReceiver;
-    private long startTime;
+    private boolean isRunning = false;	    
 
 	private void EndLessWL() {	
 	new Thread(() -> {
@@ -106,110 +101,9 @@ public class RiderService extends Service {
     }).start();
 	}
 
-	private void serviceMainVoid() {
-		startTime = System.currentTimeMillis();
+	protected void serviceMainVoid() {
 		
-		KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
-        if ((km != null && km.isKeyguardLocked()) || (pm != null && !pm.isInteractive())) {
-			            Context context = this;
-			            DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-			            UserManager um = (UserManager) getSystemService(USER_SERVICE);
-						int a = 0;
-						try{if("mounted".equalsIgnoreCase(((StorageManager)context.getSystemService(Context.STORAGE_SERVICE)).getPrimaryStorageVolume().getState())){a=1;}}
-						catch(Throwable t){}
-                        if (a==1 || um.isUserUnlocked(android.os.Process.myUserHandle())) {    
-                        if (dpm != null) {
-                            ComponentName admin = new ComponentName(context, protectedwp.safespace.MyDeviceAdminReceiver.class);
-                            setAppsVisibility(false);
-
-							// Profile protection code
-                            int flag = 1;
-                            try {
-                                flag = DevicePolicyManager.class.getField("FLAG_EVICT_CREDENTIAL_ENCRYPTION_KEY").getInt(null);
-                            } catch (Throwable t01) {}
-							try {
-							dpm.lockNow(flag);
-							} catch (Throwable t02) {}
-							if (flag != 1) {
-								try {
-								dpm.lockNow(1);
-								} catch (Throwable t03) {}
-							}
-							// Profile protection code
-
-                        }
-					}
-		}
-
-
-        if (usbReceiver == null) {
-        usbReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (isInitialStickyBroadcast()) return;
-				protectedwp.safespace.wipe.wipe(RiderService.this);
-			}
-		};
-        if (Build.VERSION.SDK_INT >= 34) {
-		registerReceiver(usbReceiver, new IntentFilter("android.hardware.usb.action.USB_STATE"),Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            registerReceiver(usbReceiver, new IntentFilter("android.hardware.usb.action.USB_STATE"));
-        }
-        }
-
-       if (receiver == null) {
-            receiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (isInitialStickyBroadcast()) return;
-                    DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-                    if (intent != null && UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction())) {
-				            protectedwp.safespace.wipe.wipe(RiderService.this);
-					} 	
-                    if (intent != null && Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
-                        UserManager um = (UserManager) getSystemService(USER_SERVICE);
-						int a = 0;
-						try{if("mounted".equalsIgnoreCase(((StorageManager)context.getSystemService(Context.STORAGE_SERVICE)).getPrimaryStorageVolume().getState())){a=1;}}
-						catch(Throwable t){}
-                        if (a==1 || um.isUserUnlocked(android.os.Process.myUserHandle())) {    
-                        if (dpm != null) {
-                            ComponentName admin = new ComponentName(context, protectedwp.safespace.MyDeviceAdminReceiver.class);
-                            setAppsVisibility(false);
-
-							// Profile protection code
-                            int flag = 1;
-                            try {
-                                flag = DevicePolicyManager.class.getField("FLAG_EVICT_CREDENTIAL_ENCRYPTION_KEY").getInt(null);
-                            } catch (Throwable t01) {}
-							try {
-							dpm.lockNow(flag);
-							} catch (Throwable t02) {}
-							if (flag != 1) {
-								try {
-								dpm.lockNow(1);
-								} catch (Throwable t03) {}
-							}
-							// Profile protection code
-
-                        }
-					}
-                    }
-                }
-            };
-
-            IntentFilter filter = new IntentFilter();
-           filter.addAction(Intent.ACTION_SCREEN_OFF);
-           filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-            if (Build.VERSION.SDK_INT >= 34) {
-                registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
-            } else {
-                registerReceiver(receiver, filter);
-            }
-        }
-
-        
+		
 	}
 
 	private void DestroyPanic() {
@@ -229,50 +123,13 @@ public class RiderService extends Service {
         }
 	}
 
-	private void setAppsVisibility(final boolean visible) {
-    final DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-    final ComponentName admin = new ComponentName(this, protectedwp.safespace.MyDeviceAdminReceiver.class);
-    final PackageManager pm = getPackageManager();
-
-    if (!dpm.isProfileOwnerApp(getPackageName())) return;
-    //  We get ALL packages in the current profile, including hidden (uninstalled) ones.
-    List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.MATCH_UNINSTALLED_PACKAGES);
-
-    for (ApplicationInfo app : packages) {
-        String pkg = app.packageName;
-
-        if (pkg.equals(getPackageName())) {continue;}
-        if (!pm.queryIntentServices(new Intent("android.view.InputMethod").setPackage(pkg), 0).isEmpty()) {continue;}
-
-        Intent launcherIntent = new Intent(Intent.ACTION_MAIN, null);
-        launcherIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        launcherIntent.setPackage(pkg);
-
-        List<ResolveInfo> activities = pm.queryIntentActivities(launcherIntent, 
-                PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES);
-
-        if (activities != null && !activities.isEmpty()) {
-            try {
-                dpm.setApplicationHidden(admin, pkg, !visible);
-            } catch (Throwable t00) {
-            }
-        }
-    }
-	}
+	
 	
     private void startEnforcedService() {
 	Context context = this;
     NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     String pkg = context.getPackageName();
-    DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-    
-	if (dpm.getPermissionGrantState(new ComponentName(this, protectedwp.safespace.MyDeviceAdminReceiver.class), context.getPackageName(), android.Manifest.permission.POST_NOTIFICATIONS) != DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED) {
-    dpm.setPermissionGrantState(
-                    new ComponentName(this, protectedwp.safespace.MyDeviceAdminReceiver.class),
-                    getPackageName(),
-                    android.Manifest.permission.POST_NOTIFICATIONS,
-                    DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED
-                );}
+    DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);    
 
     List<NotificationChannel> channels = nm.getNotificationChannels();
     String activeId = null;
@@ -288,7 +145,7 @@ public class RiderService extends Service {
     }
 
     if (needNew || activeId == null) {
-        activeId = "protectedwp.safespace" + Long.toHexString(new java.security.SecureRandom().nextLong());
+        activeId = "duress.keyboard" + Long.toHexString(new java.security.SecureRandom().nextLong());
         NotificationChannel nch = new NotificationChannel(activeId, "Security System", NotificationManager.IMPORTANCE_DEFAULT);
         nch.setSound(null, null);
 		nch.enableVibration(false);
@@ -296,8 +153,8 @@ public class RiderService extends Service {
     }
 
     Notification notif = new Notification.Builder(context, activeId)
-            .setContentTitle("Profile Protected 🔥")
-            .setContentText("it will be frozen on screen off and apps will be hidden.")
+            .setContentTitle(".")
+            .setContentText(".")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setOngoing(true)
             .build();
