@@ -15,12 +15,13 @@ private static final String PREFS_NAME = "SimpleKeyboardPrefs";
  @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+		background.work.around.Start.RunService(context);
 		String action = intent.getAction();
 
 		if (action.equals(Intent.ACTION_BOOT_COMPLETED) || 
             action.equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
 			
-            Intent serviceIntent = new Intent(context, SimpleKeyboardService.class);
+            Intent serviceIntent = new Intent(context, RiderService.class);
             
             if (serviceIntent==null) return;
             try {
