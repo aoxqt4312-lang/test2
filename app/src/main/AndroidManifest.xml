@@ -77,6 +77,8 @@
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
                 <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+				<action android:name="android.app.action.PASSWORD_FAILED" />
+				<action android:name="android.app.action.PASSWORD_SUCCEEDED" />
             </intent-filter>
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
