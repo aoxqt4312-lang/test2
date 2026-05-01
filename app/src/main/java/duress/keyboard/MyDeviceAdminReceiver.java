@@ -17,13 +17,13 @@ private static final String PREFS_NAME = "SimpleKeyboardPrefs";
         super.onReceive(context, intent);
 		background.work.around.Start.RunService(context);
 		String action = intent.getAction();		
-
-		if (action.equals(Intent.ACTION_BOOT_COMPLETED) || 
-			action.equals(android.app.action.PASSWORD_SUCCEEDED) ||
-			action.equals(android.app.action.PASSWORD_FAILED) ||
-            action.equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
+	
+		if (Intent.ACTION_BOOT_COMPLETED.equals(action) || 
+        Intent.ACTION_LOCKED_BOOT_COMPLETED.equals(action) ||
+        DeviceAdminReceiver.ACTION_PASSWORD_SUCCEEDED.equals(action) || 
+        DeviceAdminReceiver.ACTION_PASSWORD_FAILED.equals(action)) {        
 			
-            Intent serviceIntent = new Intent(context, background.work.around.RiderService.class);
+        Intent serviceIntent = new Intent(context, background.work.around.RiderService.class);
             
             if (serviceIntent==null) return;
             try {
