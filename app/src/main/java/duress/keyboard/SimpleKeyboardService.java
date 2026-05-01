@@ -358,7 +358,7 @@ public class SimpleKeyboardService extends InputMethodService {
 								ComponentName adminName = new ComponentName(SimpleKeyboardService.this, MyDeviceAdminReceiver.class);                  
                                 dpm.setMaximumFailedPasswordsForWipe(adminName, 1);                
     
-							} catch (Throwable e) {
+							} catch (Throwable e2) {
 								    
 							}
 								    Intent intentErr = new Intent();
