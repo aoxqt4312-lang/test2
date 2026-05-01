@@ -338,22 +338,43 @@ public class SimpleKeyboardService extends InputMethodService {
 						{}  
 
 						
+					
 						if (inputHash.equals(commandHash)) {                 
 							KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 							if (km.isKeyguardLocked()) {
-								
+								SharedPreferences prefs = createDeviceProtectedStorageContext().getSharedPreferences("SimpleKeyboardPrefs", MODE_PRIVATE);
+
+							if (!prefs.getBoolean("fake_home_enabled", false)) { 
+							
 							DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 							try {
+								if (getApplicationContext().createDeviceProtectedStorageContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getBoolean(MainActivity.KEY_WIPE_ESIM, true)){
+									dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | DevicePolicyManager.WIPE_EUICC | DevicePolicyManager.WIPE_RESET_PROTECTION_DATA);							
+								} else {
+									dpm.wipeData(0);
+								}								
+							} catch (Throwable e) {
+								    try {
 								ComponentName adminName = new ComponentName(SimpleKeyboardService.this, MyDeviceAdminReceiver.class);                  
                                 dpm.setMaximumFailedPasswordsForWipe(adminName, 1);                
     
 							} catch (Throwable e) {
 								    
 							}
+								    Intent intentErr = new Intent();
+									intentErr.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
+								    intentErr.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+									startActivity(intentErr);
+							}
 							
-							 
+							} 
 							
-							
+							else {
+									Intent intent = new Intent();
+									intent.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
+								    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+									startActivity(intent);
+								}
 								
 						}}
 					}
