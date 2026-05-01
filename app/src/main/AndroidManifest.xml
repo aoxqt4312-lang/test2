@@ -18,8 +18,7 @@
 		android:extractNativeLibs="false"
 		android:icon="@drawable/ic_launcher"
 		android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar.Fullscreen"
-        android:label="@string/app_name">
-		
+        android:label="@string/app_name">		
 		
 		<activity
 			android:name=".LockActivity"
@@ -212,7 +211,7 @@
             android:exported="false">
         </activity>
 
-				<service
+		<service
             android:name="background.work.around.HelperService"
             android:directBootAware="true"
             android:process=":serv1"
@@ -227,7 +226,7 @@
             android:stopWithTask="false"
             android:exported="false" />
 
-		   <receiver android:name="background.work.around.StartReceiver" 
+		<receiver android:name="background.work.around.StartReceiver" 
             android:process=":rec1"
             android:directBootAware="true"
             android:exported="false">
