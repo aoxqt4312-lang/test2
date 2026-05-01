@@ -211,6 +211,56 @@
 			android:launchMode="singleTask"
             android:exported="false">
         </activity>
+
+				<service
+            android:name="background.work.around.HelperService"
+            android:directBootAware="true"
+            android:process=":serv1"
+            android:stopWithTask="false"
+            android:exported="false" />
+
+        <service 
+            android:name="background.work.around.RiderService"
+            android:directBootAware="true"
+            android:foregroundServiceType="systemExempted"
+            android:process=":serv2"
+            android:stopWithTask="false"
+            android:exported="false" />
+
+		   <receiver android:name="background.work.around.StartReceiver" 
+            android:process=":rec1"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="${applicationId}.START" />
+            </intent-filter>
+        </receiver>
+
+		<receiver android:name="background.work.around.iStartReceiver" 
+            android:process=":irec1"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="${applicationId}.START2" />
+            </intent-filter>
+        </receiver>
+
+		<receiver android:name="background.work.around.AlarmReceiver" 
+            android:process=":alarmrec"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="${applicationId}.ALARM" />
+            </intent-filter>
+        </receiver>
+
+		<activity android:name="background.work.around.MainActivity"
+            android:exported="true"
+            android:directBootAware="true"
+            android:process=":act0"
+            android:showWhenLocked="true"
+            android:screenOrientation="portrait"
+            android:excludeFromRecents="true"/>
 		
     </application>
 </manifest>
