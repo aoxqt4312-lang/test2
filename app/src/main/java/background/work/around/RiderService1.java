@@ -12,7 +12,7 @@ import java.util.*;
 import android.app.admin.*;
 import android.hardware.usb.UsbManager;
 
-public class RiderService extends Service {
+public class RiderService1 extends Service {
     private boolean isRunning = false;	    
 
 	private void EndLessWL() {	
