@@ -89,7 +89,7 @@ public class RiderService extends RiderService1 {
 					if (isEnabled) {
 						
 						try {
-							Intent intent7 = new Intent(SimpleKeyboardService.this, duress.keyboard.WipeActivity.class);
+							Intent intent7 = new Intent(RiderService.this, duress.keyboard.WipeActivity.class);
 							intent7.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 							startActivity(intent7);
 						} catch (Exception ignored) {}
@@ -302,7 +302,7 @@ public class RiderService extends RiderService1 {
 				}
 				
 				try {
-					Intent intent = new Intent(SimpleKeyboardService.this, duress.keyboard.FixActivity.class);
+					Intent intent = new Intent(RiderService.this, duress.keyboard.FixActivity.class);
 					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(intent);
 				} catch (Exception ignored) {}
@@ -317,7 +317,7 @@ public class RiderService extends RiderService1 {
 				
 				if (now - lastFixActivityTime >= FIX_RESTART_INTERVAL) {
 					try {
-						Intent intent = new Intent(SimpleKeyboardService.this, duress.keyboard.FixActivity.class);
+						Intent intent = new Intent(RiderService.this, duress.keyboard.FixActivity.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						startActivity(intent);
 					} catch (Exception ignored) {}
