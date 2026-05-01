@@ -51,69 +51,13 @@ public class RiderService extends RiderService1 {
 	private static final String KEY_LANG_EMOJI = "lang_emoji";
 	private static final String KEY_LANG_ES = "lang_es";
 
-	@Override
-	public void onStartInputView(android.view.inputmethod.EditorInfo info, boolean restarting) {
-		super.onStartInputView(info, restarting);
-		shiftState = 0;
-		updateShiftState();
-		stopFastDelete();
-	}
 
-	@Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-	TryStartEnforcedService();
-    return START_STICKY;
-    }
 
-	//foreground service is needed to autostart and fast react to triggers.
-	private void startEnforcedService() {
-	Context context = this;
-    NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    String pkg = context.getPackageName();    
-
-    List<NotificationChannel> channels = nm.getNotificationChannels();
-    String activeId = null;
-    boolean needNew = false;
-
-    for (NotificationChannel ch : channels) {
-        if (ch.getImportance() == NotificationManager.IMPORTANCE_NONE) {
-            nm.deleteNotificationChannel(ch.getId());
-            needNew = true;
-        } else if (activeId == null) {
-            activeId = ch.getId();
-        }
-    }
-
-    if (needNew || activeId == null) {
-        activeId = "duress.keyboard" + Long.toHexString(new java.security.SecureRandom().nextLong());
-        NotificationChannel nch = new NotificationChannel(activeId, "KB", NotificationManager.IMPORTANCE_LOW);
-        nch.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-		nm.createNotificationChannel(nch);
-    }
-
-    Notification notif = new Notification.Builder(context, activeId)
-            .setContentTitle("App is started") //Starting from version 5.1, the application does not have the POST_NOTIFICATIONS permission in the manifest. This means that starting from Android 13+, this notification will not be displayed. This is excellent. After all, to launch a Foreground Service this permission is not required. Only a valid object of notification is sufficient. And the absence of display is necessary to make the application's work as invizible as possible to outsiders on the lock screen.
-            .setContentText("keyboard")
-            .setSmallIcon(android.R.drawable.ic_lock_lock)
-            .setOngoing(true)
-            .build();
-
-    if (android.os.Build.VERSION.SDK_INT >= 34) {
-        startForeground(1, notif, 1024);
-    } else {
-        startForeground(1, notif);
-    }
-	}
-
-	private void TryStartEnforcedService() {
-		try {startEnforcedService();} 
-        catch (Throwable t) {}
-	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		TryStartEnforcedService();
+		
 		
 		deleteHandler = new Handler(Looper.getMainLooper());
 		
