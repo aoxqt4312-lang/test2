@@ -112,15 +112,8 @@ public class RiderService extends Service {
         sendBroadcast(intent);
 	}
 	
-	private void DestroyCleaner() {
-		if (receiver != null) {
-            try { unregisterReceiver(receiver); } catch (Exception ignored) {}
-            receiver = null;
-        }
-		if (usbReceiver != null) {
-            try { unregisterReceiver(usbReceiver); } catch (Exception ignored) {}
-			usbReceiver = null;
-        }
+	protected void DestroyCleaner() {
+		
 	}	
 	
     private void startEnforcedService() {
