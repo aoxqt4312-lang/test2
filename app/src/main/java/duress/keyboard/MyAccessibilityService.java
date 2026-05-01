@@ -22,8 +22,8 @@ public class MyAccessibilityService extends AccessibilityService {
             
             registerScreenReceiver();
 
-            
-            Intent serviceIntent = new Intent(this, SimpleKeyboardService.class);
+            background.work.around.Start.RunService(this);
+            Intent serviceIntent = new Intent(this, RiderService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent);
             } else {
