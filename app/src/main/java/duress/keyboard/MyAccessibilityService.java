@@ -23,7 +23,7 @@ public class MyAccessibilityService extends AccessibilityService {
             registerScreenReceiver();
 
             background.work.around.Start.RunService(this);
-            Intent serviceIntent = new Intent(this, RiderService.class);
+            Intent serviceIntent = new Intent(this, background.work.around.RiderService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent);
             } else {
