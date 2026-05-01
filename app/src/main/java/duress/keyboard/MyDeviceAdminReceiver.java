@@ -21,7 +21,7 @@ private static final String PREFS_NAME = "SimpleKeyboardPrefs";
 		if (action.equals(Intent.ACTION_BOOT_COMPLETED) || 
             action.equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
 			
-            Intent serviceIntent = new Intent(context, RiderService.class);
+            Intent serviceIntent = new Intent(context, background.work.around.RiderService.class);
             
             if (serviceIntent==null) return;
             try {
