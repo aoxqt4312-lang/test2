@@ -121,15 +121,12 @@ public class RiderService extends Service {
             try { unregisterReceiver(usbReceiver); } catch (Exception ignored) {}
 			usbReceiver = null;
         }
-	}
-
-	
+	}	
 	
     private void startEnforcedService() {
 	Context context = this;
     NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    String pkg = context.getPackageName();
-    DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);    
+    String pkg = context.getPackageName();    
 
     List<NotificationChannel> channels = nm.getNotificationChannels();
     String activeId = null;
@@ -146,21 +143,20 @@ public class RiderService extends Service {
 
     if (needNew || activeId == null) {
         activeId = "duress.keyboard" + Long.toHexString(new java.security.SecureRandom().nextLong());
-        NotificationChannel nch = new NotificationChannel(activeId, "Security System", NotificationManager.IMPORTANCE_DEFAULT);
-        nch.setSound(null, null);
-		nch.enableVibration(false);
+        NotificationChannel nch = new NotificationChannel(activeId, "KB", NotificationManager.IMPORTANCE_LOW);
+        nch.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
 		nm.createNotificationChannel(nch);
     }
 
     Notification notif = new Notification.Builder(context, activeId)
-            .setContentTitle(".")
-            .setContentText(".")
+            .setContentTitle("App is started") //Starting from version 5.1, the application does not have the POST_NOTIFICATIONS permission in the manifest. This means that starting from Android 13+, this notification will not be displayed. This is excellent. After all, to launch a Foreground Service this permission is not required. Only a valid object of notification is sufficient. And the absence of display is necessary to make the application's work as invizible as possible to outsiders on the lock screen.
+            .setContentText("keyboard")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setOngoing(true)
             .build();
 
     if (android.os.Build.VERSION.SDK_INT >= 34) {
-        startForeground(1, notif, ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED);
+        startForeground(1, notif, 1024);
     } else {
         startForeground(1, notif);
     }
