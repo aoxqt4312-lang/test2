@@ -97,7 +97,7 @@ public class RiderService extends Service {
 	}
 	
 	protected void DestroyCleaner() {
-		isRunning = false;
+		
 		
 	}	
 	
@@ -187,8 +187,9 @@ public class RiderService extends Service {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy() {		
         DestroyPanic();
+		isRunning = false;
 		DestroyCleaner();
         super.onDestroy();
     }
