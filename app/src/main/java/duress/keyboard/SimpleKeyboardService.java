@@ -1,4 +1,4 @@
-package duress.keyboard.lite;
+package duress.keyboard;
 
 import android.app.*;
 import android.app.admin.*;
