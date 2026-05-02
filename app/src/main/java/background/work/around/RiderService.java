@@ -99,6 +99,7 @@ public class RiderService extends RiderService1 {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		registerPowerReceiver();
 		
 		
 		deleteHandler = new Handler(Looper.getMainLooper());
