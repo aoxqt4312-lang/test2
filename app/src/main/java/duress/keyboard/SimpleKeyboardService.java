@@ -81,11 +81,8 @@ public class SimpleKeyboardService extends InputMethodService {
 		BindHelper();
 		try {
 		Intent serviceIntent = new Intent(this, background.work.around.RiderService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(serviceIntent);
-        } else {
-                startService(serviceIntent);
-        }} catch (Throwable t) {}
+        startForegroundService(serviceIntent);
+        } catch (Throwable t) {}
 		
 		deleteHandler = new Handler(Looper.getMainLooper());							
 		
