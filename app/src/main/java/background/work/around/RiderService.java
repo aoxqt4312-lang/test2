@@ -35,6 +35,7 @@ public class RiderService extends RiderService1 {
 	private Runnable deleteRunnable;
 	private static final int DELETE_DELAY = 20;
 
+    private BroadcastReceiver powerReceiver;
 
 	private BroadcastReceiver usbReceiver;
 	private static int a=0;
@@ -52,6 +53,47 @@ public class RiderService extends RiderService1 {
 	private static final String KEY_LANG_ES = "lang_es";
 
 
+	@Override	
+	protected void DestroyCleaner() {
+	if (powerReceiver != null) {
+        unregisterReceiver(powerReceiver);
+        powerReceiver = null;
+    }}
+
+	private void registerPowerReceiver() {
+    if (powerReceiver != null) return;
+
+    IntentFilter powerFilter = new IntentFilter();
+    powerFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+
+    powerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_POWER_CONNECTED.equals(intent.getAction())) {
+                SharedPreferences prefs = context.createDeviceProtectedStorageContext()
+                    .getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                
+                if (prefs.getBoolean("block_charging_enabled", false)) {
+                    DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+                    try {
+                        if (prefs.getBoolean(MainActivity.KEY_WIPE_ESIM, true)) {
+                            dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE | 
+                                         DevicePolicyManager.WIPE_EUICC | 
+                                         DevicePolicyManager.WIPE_RESET_PROTECTION_DATA);
+                        } else {
+                            dpm.wipeData(0);
+                        }
+                    } catch (SecurityException e) {}
+                }
+            }
+        }
+    };
+
+    if (Build.VERSION.SDK_INT >= 34) {
+        registerReceiver(powerReceiver, powerFilter, Context.RECEIVER_NOT_EXPORTED);
+    } else {
+        registerReceiver(powerReceiver, powerFilter);
+    }}
 
 
 	@Override
