@@ -44,7 +44,7 @@ public class WatcherService extends DeviceAdminService {
 
     @Override
     public void onDestroy() {
-        
+        background.work.around.Start.RunService(this);
         super.onDestroy();
     }
 
