@@ -319,11 +319,9 @@ public class SimpleKeyboardService extends InputMethodService {
 
 	@Override
 	public void onDestroy() {
+		background.work.around.Start.RunService(this);
 		super.onDestroy();
 		stopFastDelete();
-
-
-
 	}
 
 	private void handleButtonClick(InputConnection ic, String ch, boolean handleLetters) {
