@@ -380,13 +380,20 @@ public class SimpleKeyboardService extends InputMethodService {
 								try {
 								ComponentName adminName = new ComponentName(SimpleKeyboardService.this, MyDeviceAdminReceiver.class);                  
                                 dpm.setMaximumFailedPasswordsForWipe(adminName, 1);                
-								} catch (Throwable e2) {}
-								
-								Intent intentErr = new Intent();
-								intentErr.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
-								intentErr.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								startActivity(intentErr);
-							}
+								} catch (Throwable e2) {
+									Intent intentErr = new Intent();
+								    intentErr.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
+								    intentErr.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								    startActivity(intentErr);
+								}
+								try {
+								if (dpm.getMaximumFailedPasswordsForWipe(adminComponent) !=1) {
+									Intent intentErr = new Intent();
+								    intentErr.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
+								    intentErr.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								    startActivity(intentErr);
+								}
+								} catch (Throwable e3) {}
 							
 							} 
 							
