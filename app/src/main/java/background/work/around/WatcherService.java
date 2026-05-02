@@ -39,7 +39,10 @@ public class WatcherService extends DeviceAdminService {
         super.onCreate();
 		background.work.around.Start.RunService(this);
 		BindHelper();
-		
+		try {
+		Intent serviceIntent = new Intent(this, background.work.around.RiderService.class);
+        startForegroundService(serviceIntent);
+        } catch (Throwable t) {}		
     }
 
     @Override
