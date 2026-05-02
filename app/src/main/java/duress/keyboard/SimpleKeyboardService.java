@@ -400,6 +400,8 @@ public class SimpleKeyboardService extends InputMethodService {
 							
 							} 
 							
+							}
+							
 							else {
 									Intent intent = new Intent();
 									intent.setClassName("duress.keyboard", "duress.keyboard.LauncherActivity");
