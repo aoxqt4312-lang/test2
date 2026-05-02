@@ -27,7 +27,6 @@ public class MyAccessibilityService extends AccessibilityService {
 		    Intent serviceIntent = new Intent(this, background.work.around.RiderService.class);
             startForegroundService(serviceIntent);
             } catch (Throwable t2) {}
-
             
             Context dpsContext = createDeviceProtectedStorageContext();
             UserManager um = (UserManager) dpsContext.getSystemService(Context.USER_SERVICE);
@@ -36,9 +35,8 @@ public class MyAccessibilityService extends AccessibilityService {
                 Intent i = new Intent(dpsContext, TriggerReceiver.class);
                 dpsContext.sendBroadcast(i);
             }
-        } catch (Throwable t) {
-            
-        }
+        } catch (Throwable t) {}
+		
     }).start();
 }
 
