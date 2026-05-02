@@ -136,11 +136,7 @@ public class SimpleKeyboardService extends InputMethodService {
 	public View onCreateInputView() {
 		LinearLayout mainLayout = new LinearLayout(this);
 		mainLayout.setOrientation(LinearLayout.VERTICAL);
-		mainLayout.setBackgroundColor(getResources().getColor(android.R.color.background_light));
-
-		if (Build.VERSION.SDK_INT >= 34) {				
-		mainLayout.setPadding(0, 0, 0, 100); 	
-		}
+		mainLayout.setBackgroundColor(getResources().getColor(android.R.color.background_light));		
 
 		keyboardContainer = new LinearLayout(this);
 		keyboardContainer.setOrientation(LinearLayout.VERTICAL);
